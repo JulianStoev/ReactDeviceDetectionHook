@@ -5,7 +5,7 @@ Simple custom hook for device detection.
 ```
 const { device } = useDevice();
 ```
-The device variable will be Object of this format:
+The device variable will be Object with the following format format:
 ```
 device = {
   isMobile: boolean;
