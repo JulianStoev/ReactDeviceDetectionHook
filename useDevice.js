@@ -1,3 +1,6 @@
+// React Device Detection Hook v1.0
+// https://github.com/JulianStoev/React-Hook-DeviceDetection
+
 import { useEffect, useState } from "react";
 
 export default function useDevice() {
