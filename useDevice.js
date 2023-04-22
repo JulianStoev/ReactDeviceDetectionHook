@@ -1,54 +1,50 @@
-// React Device Detection Hook v1.0
-// https://github.com/JulianStoev/React-Hook-DeviceDetection
+// React Device Detection Hook v2
+// https://github.com/JulianStoev/ReactDeviceDetectionHook
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-export default function useDevice() {
+export default function useDeviceHook() {
 
-  const [device, setDevice] = useState({
-    isMobile: false,
-    isDesktop: false,
-    isTablet: false
-  });
+	const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    const resize = () => {
-      const windowWidth = window.innerWidth;
-      switch(true) {
-        case (device.isDesktop === false && windowWidth >= 1024):
-          setDevice({isDesktop: true, isMobile: false, isTablet: false});
-          break;
-  
-        case (device.isTablet === false && windowWidth >= 768 && windowWidth <= 1024):
-          setDevice({isTablet: true, isDesktop: false, isMobile: false});
-          break;
-  
-        case (device.isMobile === false && windowWidth < 768):
-          setDevice({isMobile: true, isTablet: false, isDesktop: false});
-          break;
-  
-        default:
-      }
-    };
+	useEffect(() => {
+		function resize(): void {
+			switch (true) {
+				case (window.innerWidth >= 768 && window.innerWidth <= 1024):
+					dispatch(setTablet());
+					break;
 
-    resize();
+				case (window.innerWidth >= 1024):
+					dispatch(setDesktop());
+					break;
+	
+				case (window.innerWidth < 768):
+					dispatch(setMobile());
+					break;
+	
+				default:
+			}
+		}
 
-    let lock = false;
-    const handle = () => {
-      if (lock) return;
-      lock = true;
-      resize();
-      setTimeout(() => {
-        lock = false;
-        resize();
-      }, 300);
-    };
+		let lock = false;
+		const debounce = (): void => {
+			if (lock === true) return;
+			lock = true;
+			resize();
+			setTimeout(() => {
+				lock = false;
+			}, 500);
+		}
 
-    window.addEventListener('resize', handle);
-    return () => window.removeEventListener('resize', handle);
-  }, [device]);
+		debounce();
 
-  return {
-    device
-  }
+		window.addEventListener('resize', debounce);
+
+		return () => window.removeEventListener('resize', debounce);
+	}, [ dispatch ]);
+
+	return (
+		<></>
+	)
 }
